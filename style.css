@@ -492,6 +492,46 @@ section {
   line-height: 1.5;
 }
 
+/* ── Benefit Cards (metrics section) ───────────────── */
+.benefit-card {
+  background: var(--bg-base);
+  border: 1px solid var(--border-subtle);
+  border-radius: 12px;
+  padding: 2.5rem 2rem;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0.75rem;
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+.benefit-card:hover {
+  border-color: var(--border-cyan);
+  box-shadow: 0 8px 32px var(--glow-cyan);
+}
+.benefit-card.magenta:hover {
+  border-color: var(--border-magenta);
+  box-shadow: 0 8px 32px var(--glow-magenta);
+}
+.benefit-card.green:hover {
+  border-color: rgba(0,255,136,0.25);
+  box-shadow: 0 8px 32px rgba(0,255,136,0.12);
+}
+.benefit-headline {
+  font-size: clamp(1.3rem, 2.5vw, 1.75rem);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--accent-cyan);
+  line-height: 1.2;
+}
+.benefit-card.magenta .benefit-headline { color: var(--accent-magenta); }
+.benefit-card.green .benefit-headline { color: var(--accent-green); }
+.benefit-desc {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  line-height: 1.6;
+}
+
 /* ── Revenue ─────────────────────────────────────── */
 .revenue {
   background: var(--bg-base);
