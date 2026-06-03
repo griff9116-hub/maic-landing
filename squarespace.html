@@ -1,0 +1,725 @@
+<!--
+  MAIC – Squarespace Embed
+  ========================
+  SETUP INSTRUCTIONS:
+
+  Step 1 — Load fonts (do this ONCE per site, not per page):
+    Go to: Settings → Advanced → Code Injection → Header
+    Paste:
+      <link rel="preconnect" href="https://fonts.googleapis.com">
+      <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+      <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+
+  Step 2 — Create a page in Squarespace at URL slug /maic
+    Use a blank or minimal template. In the page:
+    - Add one full-width Code Block
+    - Paste EVERYTHING below (from <style> down to </script>)
+
+  Step 3 — Optional: hide Squarespace's own header/footer on this page only
+    Go to: Design → Custom CSS and add:
+      body.collection-type-page-maic .header-nav,
+      body.collection-type-page-maic footer { display: none !important; }
+    (The exact body class depends on your Squarespace template — inspect the page to find it)
+
+  Requires Squarespace Business plan or higher for JavaScript to work.
+-->
+
+<style>
+/* ── Design Tokens ────────────────────────────────── */
+#maic-page {
+  --bg-base:        #08090D;
+  --bg-card:        #0F1521;
+  --text-primary:   #FFFFFF;
+  --text-muted:     #8892A4;
+  --accent-cyan:    #00E5FF;
+  --accent-magenta: #E040FB;
+  --accent-green:   #00FF88;
+  --glow-cyan:      rgba(0, 229, 255, 0.15);
+  --glow-magenta:   rgba(224, 64, 251, 0.15);
+  --border-subtle:  rgba(255, 255, 255, 0.06);
+  --border-cyan:    rgba(0, 229, 255, 0.3);
+  --border-magenta: rgba(224, 64, 251, 0.3);
+  --font-main:      'Space Grotesk', system-ui, sans-serif;
+  --font-mono:      'Space Mono', monospace;
+  --section-pad:    100px;
+
+  background: var(--bg-base);
+  color: var(--text-primary);
+  font-family: var(--font-main);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+#maic-page *, #maic-page *::before, #maic-page *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+#maic-page a { color: inherit; text-decoration: none; }
+#maic-page img { max-width: 100%; display: block; }
+
+/* ── Container ────────────────────────────────────── */
+#maic-page .maic-c {
+  width: 90%;
+  max-width: 1200px;
+  margin-inline: auto;
+}
+
+/* ── Utilities ────────────────────────────────────── */
+#maic-page .label {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--accent-cyan);
+  display: block;
+  margin-bottom: 1rem;
+}
+#maic-page .reveal {
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+#maic-page .reveal.visible { opacity: 1; transform: none; }
+#maic-page .reveal-delay-1 { transition-delay: 0.1s; }
+#maic-page .reveal-delay-2 { transition-delay: 0.2s; }
+#maic-page .reveal-delay-3 { transition-delay: 0.3s; }
+#maic-page .reveal-delay-4 { transition-delay: 0.4s; }
+#maic-page .reveal-delay-5 { transition-delay: 0.5s; }
+
+/* ── Buttons ──────────────────────────────────────── */
+#maic-page .btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: var(--accent-cyan);
+  color: var(--bg-base);
+  font-family: var(--font-main);
+  font-weight: 700;
+  font-size: 0.92rem;
+  letter-spacing: 0.02em;
+  padding: 0.85rem 2rem;
+  border-radius: 4px;
+  border: none;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+  text-decoration: none;
+}
+#maic-page .btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 32px rgba(0,229,255,0.3);
+}
+#maic-page .btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: transparent;
+  color: var(--text-primary);
+  font-family: var(--font-main);
+  font-weight: 600;
+  font-size: 0.92rem;
+  padding: 0.85rem 2rem;
+  border-radius: 4px;
+  border: 1px solid var(--border-subtle);
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s;
+  text-decoration: none;
+}
+#maic-page .btn-secondary:hover {
+  border-color: var(--text-muted);
+  background: rgba(255,255,255,0.04);
+}
+
+/* ── Divider ──────────────────────────────────────── */
+#maic-page .divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--border-subtle), transparent);
+}
+
+/* ── Section Shared ───────────────────────────────── */
+#maic-page section { padding: var(--section-pad) 0; }
+#maic-page .section-header { text-align: center; margin-bottom: 4rem; }
+#maic-page .section-title {
+  font-size: clamp(2rem, 4vw, 3rem);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+  margin-bottom: 1rem;
+}
+#maic-page .section-title em {
+  font-style: normal;
+  background: linear-gradient(135deg, var(--accent-cyan), var(--accent-magenta));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+#maic-page .section-lead {
+  font-size: 1.05rem;
+  color: var(--text-muted);
+  max-width: 54ch;
+  margin-inline: auto;
+  line-height: 1.7;
+}
+
+/* ── Hero ─────────────────────────────────────────── */
+#maic-page .hero {
+  padding: 80px 0 80px;
+  position: relative;
+  overflow: hidden;
+}
+#maic-page .hero-grid {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(var(--border-subtle) 1px, transparent 1px),
+    linear-gradient(90deg, var(--border-subtle) 1px, transparent 1px);
+  background-size: 60px 60px;
+  mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black, transparent);
+}
+#maic-page .hero-glow-left {
+  position: absolute; top: 20%; left: -10%;
+  width: 500px; height: 500px;
+  background: radial-gradient(circle, rgba(0,229,255,0.12) 0%, transparent 70%);
+  pointer-events: none;
+}
+#maic-page .hero-glow-right {
+  position: absolute; bottom: 10%; right: -5%;
+  width: 400px; height: 400px;
+  background: radial-gradient(circle, rgba(224,64,251,0.1) 0%, transparent 70%);
+  pointer-events: none;
+}
+#maic-page .hero-content {
+  position: relative; z-index: 2;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4rem;
+  align-items: center;
+}
+#maic-page .hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: var(--glow-cyan);
+  border: 1px solid var(--border-cyan);
+  border-radius: 100px;
+  padding: 0.4rem 1rem;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent-cyan);
+  margin-bottom: 2rem;
+}
+#maic-page .hero-badge::before {
+  content: '';
+  width: 6px; height: 6px;
+  background: var(--accent-cyan);
+  border-radius: 50%;
+  animation: maic-pulse 2s infinite;
+}
+@keyframes maic-pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
+#maic-page .hero-title {
+  font-size: clamp(2.6rem, 5vw, 4.2rem);
+  font-weight: 700;
+  line-height: 1.08;
+  letter-spacing: -0.02em;
+  margin-bottom: 1.5rem;
+}
+#maic-page .hero-title em { font-style: normal; color: var(--accent-magenta); }
+#maic-page .hero-sub {
+  font-size: 1.1rem;
+  color: var(--text-muted);
+  line-height: 1.7;
+  margin-bottom: 2.5rem;
+  max-width: 42ch;
+}
+#maic-page .hero-actions {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  flex-wrap: wrap;
+}
+#maic-page .hero-right { display: flex; flex-direction: column; gap: 1.25rem; }
+#maic-page .hero-stat-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: 12px;
+  padding: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  transition: border-color 0.3s;
+}
+#maic-page .hero-stat-card:hover { border-color: var(--border-cyan); }
+#maic-page .hero-stat-icon {
+  width: 48px; height: 48px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4rem;
+  flex-shrink: 0;
+}
+#maic-page .hero-stat-icon.cyan { background: var(--glow-cyan); }
+#maic-page .hero-stat-icon.magenta { background: var(--glow-magenta); }
+#maic-page .hero-stat-icon.green { background: rgba(0,255,136,0.1); }
+#maic-page .hero-stat-number {
+  font-size: 2rem; font-weight: 700; line-height: 1;
+  color: var(--accent-cyan); letter-spacing: -0.02em;
+}
+#maic-page .hero-stat-number.magenta { color: var(--accent-magenta); }
+#maic-page .hero-stat-number.green { color: var(--accent-green); }
+#maic-page .hero-stat-desc { font-size: 0.85rem; color: var(--text-muted); margin-top: 0.25rem; }
+
+/* ── How It Works ─────────────────────────────────── */
+#maic-page .how-it-works { background: var(--bg-base); }
+#maic-page .phases-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+}
+#maic-page .phase-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: 12px;
+  padding: 2rem;
+  position: relative;
+  overflow: hidden;
+  transition: border-color 0.3s, transform 0.3s, box-shadow 0.3s;
+}
+#maic-page .phase-card::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, var(--accent-cyan), transparent);
+  opacity: 0; transition: opacity 0.3s;
+}
+#maic-page .phase-card:hover { border-color: var(--border-cyan); transform: translateY(-4px); box-shadow: 0 16px 48px var(--glow-cyan); }
+#maic-page .phase-card:hover::before { opacity: 1; }
+#maic-page .phase-card:nth-child(3n+2):hover { border-color: var(--border-magenta); box-shadow: 0 16px 48px var(--glow-magenta); }
+#maic-page .phase-card:nth-child(3n+2)::before { background: linear-gradient(90deg, var(--accent-magenta), transparent); }
+#maic-page .phase-number {
+  font-family: var(--font-mono); font-size: 0.72rem;
+  color: var(--accent-cyan); letter-spacing: 0.1em;
+  margin-bottom: 1rem; display: block;
+}
+#maic-page .phase-card:nth-child(3n+2) .phase-number { color: var(--accent-magenta); }
+#maic-page .phase-month { font-size: 0.78rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted); margin-bottom: 0.75rem; }
+#maic-page .phase-title { font-size: 1.05rem; font-weight: 700; margin-bottom: 1rem; line-height: 1.35; }
+#maic-page .phase-bullets { list-style: none; display: flex; flex-direction: column; gap: 0.5rem; }
+#maic-page .phase-bullets li { font-size: 0.85rem; color: var(--text-muted); padding-left: 1rem; position: relative; line-height: 1.5; }
+#maic-page .phase-bullets li::before { content: '→'; position: absolute; left: 0; color: var(--accent-cyan); font-size: 0.75rem; }
+#maic-page .phase-card:nth-child(3n+2) .phase-bullets li::before { color: var(--accent-magenta); }
+
+/* ── Metrics ──────────────────────────────────────── */
+#maic-page .metrics { background: var(--bg-card); position: relative; overflow: hidden; }
+#maic-page .metrics::before {
+  content: ''; position: absolute; top: -200px; left: 50%; transform: translateX(-50%);
+  width: 800px; height: 400px;
+  background: radial-gradient(ellipse, rgba(0,229,255,0.06) 0%, transparent 70%);
+  pointer-events: none;
+}
+#maic-page .metrics-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; }
+#maic-page .metric-card {
+  background: var(--bg-base); border: 1px solid var(--border-subtle);
+  border-radius: 12px; padding: 2.5rem 2rem; text-align: center;
+  position: relative; overflow: hidden;
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+#maic-page .metric-card:hover { border-color: var(--border-cyan); box-shadow: 0 8px 32px var(--glow-cyan); }
+#maic-page .metric-card.magenta:hover { border-color: var(--border-magenta); box-shadow: 0 8px 32px var(--glow-magenta); }
+#maic-page .metric-value {
+  font-size: clamp(2.8rem, 5vw, 4rem); font-weight: 700; line-height: 1;
+  color: var(--accent-cyan); letter-spacing: -0.02em; margin-bottom: 0.5rem;
+}
+#maic-page .metric-card.magenta .metric-value { color: var(--accent-magenta); }
+#maic-page .metric-card.green .metric-value { color: var(--accent-green); }
+#maic-page .metric-label { font-size: 0.9rem; font-weight: 600; color: var(--text-primary); margin-bottom: 0.4rem; }
+#maic-page .metric-desc { font-size: 0.8rem; color: var(--text-muted); line-height: 1.5; }
+#maic-page .benefit-card {
+  background: var(--bg-base); border: 1px solid var(--border-subtle);
+  border-radius: 12px; padding: 2.5rem 2rem; text-align: center;
+  display: flex; flex-direction: column; justify-content: center; gap: 0.75rem;
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+#maic-page .benefit-card:hover { border-color: var(--border-cyan); box-shadow: 0 8px 32px var(--glow-cyan); }
+#maic-page .benefit-card.magenta:hover { border-color: var(--border-magenta); box-shadow: 0 8px 32px var(--glow-magenta); }
+#maic-page .benefit-card.green:hover { border-color: rgba(0,255,136,0.25); box-shadow: 0 8px 32px rgba(0,255,136,0.12); }
+#maic-page .benefit-headline {
+  font-size: clamp(1.3rem, 2.5vw, 1.75rem); font-weight: 700;
+  letter-spacing: -0.01em; color: var(--accent-cyan); line-height: 1.2;
+}
+#maic-page .benefit-card.magenta .benefit-headline { color: var(--accent-magenta); }
+#maic-page .benefit-card.green .benefit-headline { color: var(--accent-green); }
+#maic-page .benefit-desc { font-size: 0.85rem; color: var(--text-muted); line-height: 1.6; }
+
+/* ── Revenue ──────────────────────────────────────── */
+#maic-page .revenue { background: var(--bg-base); }
+#maic-page .revenue-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 5rem; align-items: start; }
+#maic-page .revenue-intro-label {
+  font-family: var(--font-mono); font-size: 0.72rem; color: var(--accent-magenta);
+  letter-spacing: 0.18em; text-transform: uppercase; display: block; margin-bottom: 1rem;
+}
+#maic-page .revenue-intro-title { font-size: clamp(1.8rem, 3.5vw, 2.6rem); font-weight: 700; letter-spacing: -0.02em; line-height: 1.2; margin-bottom: 1.25rem; }
+#maic-page .revenue-intro-text { font-size: 1rem; color: var(--text-muted); line-height: 1.75; margin-bottom: 2rem; }
+#maic-page .revenue-streams { display: flex; flex-direction: column; gap: 1.25rem; }
+#maic-page .stream-card {
+  background: var(--bg-card); border: 1px solid var(--border-subtle);
+  border-radius: 12px; padding: 1.75rem;
+  display: grid; grid-template-columns: 56px 1fr auto;
+  align-items: center; gap: 1.25rem;
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+#maic-page .stream-card:hover { border-color: var(--border-cyan); box-shadow: 0 4px 24px var(--glow-cyan); }
+#maic-page .stream-icon {
+  width: 56px; height: 56px; border-radius: 12px;
+  background: var(--glow-cyan);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.6rem; flex-shrink: 0;
+}
+#maic-page .stream-icon.magenta { background: var(--glow-magenta); }
+#maic-page .stream-icon.green { background: rgba(0,255,136,0.1); }
+#maic-page .stream-name { font-weight: 700; font-size: 1rem; margin-bottom: 0.2rem; }
+#maic-page .stream-detail { font-size: 0.82rem; color: var(--text-muted); line-height: 1.4; }
+#maic-page .stream-value {
+  font-family: var(--font-mono); font-weight: 700; font-size: 1.05rem;
+  color: var(--accent-cyan); text-align: right; white-space: nowrap;
+}
+#maic-page .stream-card:nth-child(2) .stream-value { color: var(--accent-magenta); }
+#maic-page .stream-card:nth-child(3) .stream-value { color: var(--accent-green); }
+
+/* ── CTA ──────────────────────────────────────────── */
+#maic-page .cta-banner {
+  background: var(--bg-card);
+  border-top: 1px solid var(--border-subtle);
+  border-bottom: 1px solid var(--border-subtle);
+  padding: 80px 0;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+#maic-page .cta-banner::before {
+  content: ''; position: absolute; inset: 0;
+  background: radial-gradient(ellipse 60% 80% at 50% 50%, rgba(224,64,251,0.06), transparent);
+  pointer-events: none;
+}
+#maic-page .cta-banner .maic-c { position: relative; }
+#maic-page .cta-title { font-size: clamp(2rem, 4vw, 3rem); font-weight: 700; letter-spacing: -0.02em; margin-bottom: 1rem; }
+#maic-page .cta-sub { font-size: 1.05rem; color: var(--text-muted); margin-bottom: 2.5rem; max-width: 46ch; margin-inline: auto; line-height: 1.7; }
+#maic-page .cta-actions { display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap; }
+
+/* ── Responsive ───────────────────────────────────── */
+@media (max-width: 1024px) {
+  #maic-page .phases-grid { grid-template-columns: repeat(2, 1fr); }
+  #maic-page .metrics-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 768px) {
+  #maic-page { --section-pad: 64px; }
+  #maic-page .hero { padding: 48px 0 56px; }
+  #maic-page .hero-content { grid-template-columns: 1fr; gap: 2.5rem; }
+  #maic-page .hero-sub { max-width: 100%; font-size: 1rem; }
+  #maic-page .hero-right { display: flex; flex-direction: row; flex-wrap: wrap; gap: 1rem; }
+  #maic-page .hero-stat-card { flex: 1 1 calc(50% - 0.5rem); min-width: 0; }
+  #maic-page .phases-grid { grid-template-columns: 1fr; }
+  #maic-page .metrics-grid { grid-template-columns: 1fr 1fr; }
+  #maic-page .revenue-layout { grid-template-columns: 1fr; gap: 2.5rem; }
+  #maic-page .stream-card { grid-template-columns: 48px 1fr; }
+  #maic-page .stream-icon { width: 48px; height: 48px; font-size: 1.4rem; }
+  #maic-page .stream-value { display: none; }
+}
+@media (max-width: 480px) {
+  #maic-page { --section-pad: 48px; }
+  #maic-page .hero { padding: 32px 0 48px; }
+  #maic-page .hero-stat-card { flex: 1 1 100%; }
+  #maic-page .metrics-grid { grid-template-columns: 1fr; }
+  #maic-page .hero-actions { flex-direction: column; align-items: stretch; }
+  #maic-page .btn-primary, #maic-page .btn-secondary { text-align: center; justify-content: center; }
+}
+</style>
+
+<div id="maic-page">
+
+  <!-- ── Hero ────────────────────────────────── -->
+  <section class="hero" aria-labelledby="maic-hero-heading">
+    <div class="hero-grid" aria-hidden="true"></div>
+    <div class="hero-glow-left" aria-hidden="true"></div>
+    <div class="hero-glow-right" aria-hidden="true"></div>
+    <div class="maic-c hero-content">
+      <div class="hero-left">
+        <div class="hero-badge reveal">Marine Autonomy Investor Catalyst</div>
+        <h1 id="maic-hero-heading" class="hero-title reveal reveal-delay-1">
+          Capital for the <em>Ocean of Tomorrow</em>
+        </h1>
+        <p class="hero-sub reveal reveal-delay-2">
+          A 6-month structured programme connecting marine autonomy startups
+          with 50+ pre-aligned investors — building warm relationships and being
+          guided in your development by the investors themselves, long before you
+          formally raise. This programme is suitable for companies 6–12 months
+          away from a fundraise.
+        </p>
+        <div class="hero-actions reveal reveal-delay-3">
+          <a href="#maic-how-it-works" class="btn-primary">See How It Works ↓</a>
+          <a href="#maic-contact" class="btn-secondary">Apply to MAIC</a>
+        </div>
+      </div>
+      <div class="hero-right">
+        <div class="hero-stat-card reveal reveal-delay-2">
+          <div class="hero-stat-icon cyan" aria-hidden="true">🌊</div>
+          <div>
+            <div class="hero-stat-number">50+</div>
+            <div class="hero-stat-desc">Pre-qualified VCs across deep-tech, climate, hardware and defence</div>
+          </div>
+        </div>
+        <div class="hero-stat-card reveal reveal-delay-3">
+          <div class="hero-stat-icon magenta" aria-hidden="true">🚀</div>
+          <div>
+            <div class="hero-stat-number magenta">6</div>
+            <div class="hero-stat-desc">Structured months from onboarding to soft circles</div>
+          </div>
+        </div>
+        <div class="hero-stat-card reveal reveal-delay-4">
+          <div class="hero-stat-icon green" aria-hidden="true">📈</div>
+          <div>
+            <div class="hero-stat-number green">5–7</div>
+            <div class="hero-stat-desc">Warm investor leads targeted per startup by Month 6</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ── How It Works ─────────────────────── -->
+  <section id="maic-how-it-works" class="how-it-works" aria-labelledby="maic-hiw-heading">
+    <div class="maic-c">
+      <div class="section-header">
+        <span class="label reveal">The Programme</span>
+        <h2 id="maic-hiw-heading" class="section-title reveal reveal-delay-1">Six Months to <em>Raise-Ready</em></h2>
+        <p class="section-lead reveal reveal-delay-2">
+          Each phase is designed to deepen VC relationships and build the evidence
+          base investors need — so by Month 6, you're already in conversations with
+          the relevant investors, not trying to get in the door via a cold approach.
+        </p>
+      </div>
+      <div class="phases-grid">
+        <article class="phase-card reveal">
+          <span class="phase-number">01.</span>
+          <p class="phase-month">Month 1</p>
+          <h3 class="phase-title">Onboarding &amp; Investor Thesis Alignment</h3>
+          <ul class="phase-bullets">
+            <li>Kickoff workshop — investor landscape briefing</li>
+            <li>Deep-dive startup profiling &amp; one-pager creation</li>
+            <li>Map and outreach to 50+ target VCs</li>
+            <li>Personalised Investment Memo per startup</li>
+          </ul>
+        </article>
+        <article class="phase-card reveal reveal-delay-1">
+          <span class="phase-number">02.</span>
+          <p class="phase-month">Month 2</p>
+          <h3 class="phase-title">Investor Education &amp; First Touchpoints</h3>
+          <ul class="phase-bullets">
+            <li>"Marine Autonomy 2026" investor briefing event</li>
+            <li>Facilitated 2–3 startup–VC intros per company</li>
+            <li>Speed-dating VC office hours (2-hour format)</li>
+            <li>Pitch refinement: how to speak to marine VCs</li>
+          </ul>
+        </article>
+        <article class="phase-card reveal reveal-delay-2">
+          <span class="phase-number">03.</span>
+          <p class="phase-month">Month 3</p>
+          <h3 class="phase-title">Deep Dive &amp; Relationship Building</h3>
+          <ul class="phase-bullets">
+            <li>30-minute deep-dive sessions with small VC groups</li>
+            <li>VC Advisory Board roundtable on sector trends</li>
+            <li>Custom shortlist of 5–10 priority investors per startup</li>
+            <li>Monthly newsletter of startup milestones to 50+ VCs</li>
+          </ul>
+        </article>
+        <article class="phase-card reveal reveal-delay-3">
+          <span class="phase-number">04.</span>
+          <p class="phase-month">Month 4</p>
+          <h3 class="phase-title">Validation &amp; Soft Circles</h3>
+          <ul class="phase-bullets">
+            <li>Steampunk schedules follow-up VC meetings</li>
+            <li>Workshop: how to build a soft circle</li>
+            <li>Startup progress reviews &amp; investor-targeting refinement</li>
+            <li>VC testimonial library built (video/quote format)</li>
+          </ul>
+        </article>
+        <article class="phase-card reveal reveal-delay-4">
+          <span class="phase-number">05.</span>
+          <p class="phase-month">Month 5</p>
+          <h3 class="phase-title">Pre-Raise Preparation</h3>
+          <ul class="phase-bullets">
+            <li>Live pitch practice with a panel of 3–5 VCs</li>
+            <li>Data room setup: what investors actually want</li>
+            <li>Identify 5–7 warm leads with strong intent signals</li>
+            <li>Speed networking — 10-minute 1:1s with matched VCs</li>
+          </ul>
+        </article>
+        <article class="phase-card reveal reveal-delay-5">
+          <span class="phase-number">06.</span>
+          <p class="phase-month">Month 6</p>
+          <h3 class="phase-title">Commitment &amp; Handoff to Fundraising</h3>
+          <ul class="phase-bullets">
+            <li>VC commitment sessions — valuation &amp; round size discussions</li>
+            <li>Final Investor Showcase (Demo Day) to 50+ VCs</li>
+            <li>Personalised 6-month fundraising roadmap</li>
+            <li>Programme retrospective &amp; alumni network access</li>
+          </ul>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ── Metrics ───────────────────────────── -->
+  <section class="metrics" aria-labelledby="maic-metrics-heading">
+    <div class="maic-c">
+      <div class="section-header">
+        <span class="label reveal">Programme Outcomes</span>
+        <h2 id="maic-metrics-heading" class="section-title reveal reveal-delay-1">What <em>Success</em> Looks Like</h2>
+      </div>
+      <div class="metrics-grid">
+        <div class="metric-card reveal">
+          <div class="metric-value" data-target="50" data-suffix="+">0</div>
+          <div class="metric-label">Pre-vetted Investors</div>
+          <div class="metric-desc">Access to a potential pool of 50+ pre-vetted and engaged investors</div>
+        </div>
+        <div class="metric-card magenta reveal reveal-delay-1">
+          <div class="metric-value magenta" data-target="50" data-prefix="30–" data-suffix="">0</div>
+          <div class="metric-label">Startup–VC Introductions</div>
+          <div class="metric-desc">Facilitated intros per startup across all programme months</div>
+        </div>
+        <div class="metric-card green reveal reveal-delay-2">
+          <div class="metric-value green" data-target="7" data-prefix="5–" data-suffix="">0</div>
+          <div class="metric-label">Warm Leads targeted per Startup</div>
+          <div class="metric-desc">VCs expressing soft circle interest before formal raise</div>
+        </div>
+        <div class="benefit-card reveal reveal-delay-3">
+          <div class="benefit-headline">Investors at every stage</div>
+          <div class="benefit-desc">so your end-to-end funding pathway can be mapped out early</div>
+        </div>
+        <div class="benefit-card magenta reveal reveal-delay-4">
+          <div class="benefit-headline">Lower your anxiety</div>
+          <div class="benefit-desc">by getting ahead of your fundraise to secure the cash-flows you'll need ahead of time</div>
+        </div>
+        <div class="benefit-card green reveal reveal-delay-5">
+          <div class="benefit-headline">Increase your focus</div>
+          <div class="benefit-desc">and the time you can spend on the things that really matter like product development and talking to customers and partners</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ── Revenue ───────────────────────────── -->
+  <section class="revenue" aria-labelledby="maic-revenue-heading">
+    <div class="maic-c">
+      <div class="revenue-layout">
+        <div class="revenue-left">
+          <span class="revenue-intro-label reveal">Commercial Model</span>
+          <h2 id="maic-revenue-heading" class="revenue-intro-title reveal reveal-delay-1">Aligned Incentives,<br>Shared Upside</h2>
+          <p class="revenue-intro-text reveal reveal-delay-2">
+            MAIC is built so Steampunk only wins when startups win.
+            Retainers keep the lights on; success fees and equity warrants
+            mean our interests are locked to your outcome.
+          </p>
+        </div>
+        <div class="revenue-streams">
+          <div class="stream-card reveal">
+            <div class="stream-icon" aria-hidden="true">📋</div>
+            <div>
+              <div class="stream-name">Monthly Retainer</div>
+              <div class="stream-detail">Start-ups (&lt;£1m ARR) £250+VAT/month · Scale-ups (&gt;£1m ARR) £750+VAT/month. 10% discount for upfront payment of 6 months. Stay in the programme as long as you need.</div>
+            </div>
+            <div class="stream-value">£250–750<br><small style="font-size:0.7rem;color:var(--text-muted)">+ VAT/mo</small></div>
+          </div>
+          <div class="stream-card reveal reveal-delay-1">
+            <div class="stream-icon magenta" aria-hidden="true">🎯</div>
+            <div>
+              <div class="stream-name">Success Fee</div>
+              <div class="stream-detail">5% of funds raised, capped at £20k per startup. Only triggered on a completed raise — no raise, no fee.</div>
+            </div>
+            <div class="stream-value">5%<br><small style="font-size:0.7rem;color:var(--text-muted)">of raise</small></div>
+          </div>
+          <div class="stream-card reveal reveal-delay-2">
+            <div class="stream-icon green" aria-hidden="true">📊</div>
+            <div>
+              <div class="stream-name">Equity Warrants</div>
+              <div class="stream-detail">0.5% equity per startup, vesting upon a completed fundraise. Long-term upside alignment.</div>
+            </div>
+            <div class="stream-value">0.5%<br><small style="font-size:0.7rem;color:var(--text-muted)">equity</small></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ── CTA ──────────────────────────────── -->
+  <section id="maic-contact" class="cta-banner" aria-labelledby="maic-cta-heading">
+    <div class="maic-c">
+      <span class="label reveal" style="text-align:center;color:var(--accent-magenta)">Ready to Raise?</span>
+      <h2 id="maic-cta-heading" class="cta-title reveal reveal-delay-1">Join the Next MAIC Cohort</h2>
+      <p class="cta-sub reveal reveal-delay-2">
+        Applications are open for Q3 2026. Cohort size is capped at 10 startups
+        — we work closely with each team, so spaces are limited.
+      </p>
+      <div class="cta-actions reveal reveal-delay-3">
+        <a href="mailto:maic@steampunk.ventures" class="btn-primary">Apply Now →</a>
+        <a href="https://www.steampunk.ventures/" class="btn-secondary" target="_blank" rel="noopener noreferrer">About Steampunk Ventures</a>
+      </div>
+    </div>
+  </section>
+
+</div><!-- /#maic-page -->
+
+<script>
+(function () {
+  var page = document.getElementById('maic-page');
+  if (!page) return;
+
+  // Scroll-reveal
+  var revealObs = new IntersectionObserver(function (entries) {
+    entries.forEach(function (e) {
+      if (e.isIntersecting) { e.target.classList.add('visible'); revealObs.unobserve(e.target); }
+    });
+  }, { threshold: 0.12 });
+  page.querySelectorAll('.reveal').forEach(function (el) { revealObs.observe(el); });
+
+  // Animated counters
+  function animateCounter(el) {
+    var target = parseFloat(el.dataset.target);
+    var prefix = el.dataset.prefix || '';
+    var suffix = el.dataset.suffix || '';
+    var duration = 1600;
+    var startTime = performance.now();
+    function step(now) {
+      var progress = Math.min((now - startTime) / duration, 1);
+      var eased = 1 - Math.pow(1 - progress, 3);
+      el.textContent = prefix + Math.floor(target * eased) + suffix;
+      if (progress < 1) requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+  }
+  var counterObs = new IntersectionObserver(function (entries) {
+    entries.forEach(function (e) {
+      if (e.isIntersecting) { animateCounter(e.target); counterObs.unobserve(e.target); }
+    });
+  }, { threshold: 0.5 });
+  page.querySelectorAll('.metric-value[data-target]').forEach(function (el) { counterObs.observe(el); });
+
+  // Smooth scroll for internal links
+  page.querySelectorAll('a[href^="#maic-"]').forEach(function (link) {
+    link.addEventListener('click', function (e) {
+      var target = document.querySelector(link.getAttribute('href'));
+      if (!target) return;
+      e.preventDefault();
+      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  });
+})();
+</script>
