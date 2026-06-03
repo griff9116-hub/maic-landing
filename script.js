@@ -58,6 +58,55 @@ document.querySelectorAll('a[href^="#"]').forEach(link => {
   });
 });
 
+// Apply modal
+const applyModal = document.getElementById('apply-modal');
+const applyForm  = document.getElementById('apply-form');
+const formError  = document.getElementById('form-error');
+const applySuccess = document.getElementById('apply-success');
+const applyFormWrap = document.getElementById('apply-form-wrap');
+
+function openModal() {
+  applyModal.removeAttribute('hidden');
+  document.body.style.overflow = 'hidden';
+  setTimeout(() => document.getElementById('f-name').focus(), 50);
+}
+function closeModal() {
+  applyModal.setAttribute('hidden', '');
+  document.body.style.overflow = '';
+}
+
+document.querySelectorAll('[data-apply]').forEach(btn => {
+  btn.addEventListener('click', e => { e.preventDefault(); openModal(); });
+});
+document.querySelector('.modal-close').addEventListener('click', closeModal);
+document.querySelector('.modal-close-success').addEventListener('click', closeModal);
+applyModal.addEventListener('click', e => { if (e.target === applyModal) closeModal(); });
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape' && !applyModal.hasAttribute('hidden')) closeModal();
+});
+
+applyForm.addEventListener('submit', async e => {
+  e.preventDefault();
+  const btn = applyForm.querySelector('.modal-submit');
+  formError.setAttribute('hidden', '');
+  btn.textContent = 'Sending…';
+  btn.disabled = true;
+  try {
+    const res = await fetch(applyForm.action, {
+      method: 'POST',
+      body: new FormData(applyForm),
+      headers: { 'Accept': 'application/json' }
+    });
+    if (!res.ok) throw new Error();
+    applyFormWrap.setAttribute('hidden', '');
+    applySuccess.removeAttribute('hidden');
+  } catch {
+    formError.removeAttribute('hidden');
+    btn.textContent = 'Submit Application →';
+    btn.disabled = false;
+  }
+});
+
 // Mobile hamburger menu
 const hamburger = document.querySelector('.nav-hamburger');
 const navLinks = document.querySelector('.nav-links');

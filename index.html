@@ -54,9 +54,9 @@
           <a href="#how-it-works" class="btn-primary">
             See How It Works ↓
           </a>
-          <a href="#contact" class="btn-secondary">
+          <button class="btn-secondary" data-apply>
             Apply to MAIC
-          </a>
+          </button>
         </div>
       </div>
 
@@ -299,9 +299,9 @@
         — we work closely with each team, so spaces are limited.
       </p>
       <div class="cta-actions reveal reveal-delay-3">
-        <a href="mailto:maic@steampunk.ventures" class="btn-primary">
+        <button class="btn-primary" data-apply>
           Apply Now →
-        </a>
+        </button>
         <a href="https://www.steampunk.ventures/" class="btn-secondary" target="_blank" rel="noopener noreferrer">
           About Steampunk Ventures
         </a>
@@ -322,6 +322,47 @@
       </ul>
     </div>
   </footer>
+
+  <!-- ── Apply Modal ───────────────────────────────── -->
+  <div id="apply-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="modal-title" hidden>
+    <div class="modal-card">
+      <button class="modal-close" aria-label="Close">✕</button>
+
+      <div id="apply-form-wrap">
+        <span class="label">Apply to MAIC</span>
+        <h2 id="modal-title" class="modal-title">Join the Next Cohort</h2>
+        <p class="modal-sub">Tell us about yourself and your company. The Steampunk team will be in touch within 48 hours.</p>
+
+        <form id="apply-form" action="https://formsubmit.co/ajax/simon@steampunk.ventures" method="POST" novalidate>
+          <input type="hidden" name="_subject" value="New MAIC Programme Application">
+          <input type="hidden" name="_captcha" value="false">
+
+          <div class="form-group">
+            <label for="f-name">Full Name</label>
+            <input type="text" id="f-name" name="name" placeholder="Jane Smith" required autocomplete="name">
+          </div>
+          <div class="form-group">
+            <label for="f-email">Email Address</label>
+            <input type="email" id="f-email" name="email" placeholder="jane@company.com" required autocomplete="email">
+          </div>
+          <div class="form-group">
+            <label for="f-phone">Phone Number</label>
+            <input type="tel" id="f-phone" name="phone" placeholder="+44 7700 000000" required autocomplete="tel">
+          </div>
+
+          <p id="form-error" class="form-error" hidden>Something went wrong — please try again or email <a href="mailto:simon@steampunk.ventures">simon@steampunk.ventures</a>.</p>
+          <button type="submit" class="btn-primary modal-submit">Submit Application →</button>
+        </form>
+      </div>
+
+      <div id="apply-success" hidden>
+        <div class="success-icon" aria-hidden="true">✓</div>
+        <h2 class="modal-title">Application Received</h2>
+        <p class="modal-sub">Thanks! The Steampunk Ventures team will review your application and be in touch within 48 hours.</p>
+        <button class="btn-secondary modal-close-success">Close</button>
+      </div>
+    </div>
+  </div>
 
   <script src="script.js" defer></script>
 </body>
