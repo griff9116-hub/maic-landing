@@ -27,7 +27,7 @@ function animateCounter(el) {
 
   function step(now) {
     const progress = Math.min((now - startTime) / duration, 1);
-    const eased = 1 - Math.pow(1 - progress, 3);
+    const eased = 1 - Math.pow(1 - progress, 3); // ease-out cubic
     const current = target * eased;
     el.textContent = prefix + (isFloat ? current.toFixed(1) : Math.floor(current)) + suffix;
     if (progress < 1) requestAnimationFrame(step);
